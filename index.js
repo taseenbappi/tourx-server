@@ -36,17 +36,27 @@ async function run() {
             res.send(package);
 
         })
+        //get api(getting all order)
+        app.get('/order', async (req, res) => {
+            const cursor = orderCollection.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
+        //post api(insert an package)
+        app.post('/addPackage', async (req, res) => {
+            const package = req.body;
+            const result = await packageCollection.insertOne(package);
+            res.json(result);
+        })
         //post api(place Order)
         app.post('/placedOrder', async (req, res) => {
-            console.log("server hittin", req.body);
             const comment = req.body;
             const result = await orderCollection.insertOne(comment);
             res.json(result);
         })
         //post api(cutomer comment)
         app.post('/customerComment', async (req, res) => {
-            console.log("server hittin", req.body);
             const comment = req.body;
             const result = await commentCollection.insertOne(comment);
             res.json(result);
