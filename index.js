@@ -20,6 +20,7 @@ async function run() {
         const database = client.db("tourX");
         const packageCollection = database.collection("tourPackage");
         const commentCollection = database.collection("customerComment");
+        const orderCollection = database.collection("placedOrder");
 
         //get api(getting all tour packages)
         app.get('/packages', async (req, res) => {
@@ -36,14 +37,19 @@ async function run() {
 
         })
 
+        //post api(place Order)
+        app.post('/placedOrder', async (req, res) => {
+            console.log("server hittin", req.body);
+            const comment = req.body;
+            const result = await orderCollection.insertOne(comment);
+            res.json(result);
+        })
         //post api(cutomer comment)
         app.post('/customerComment', async (req, res) => {
             console.log("server hittin", req.body);
             const comment = req.body;
             const result = await commentCollection.insertOne(comment);
             res.json(result);
-
-
         })
     }
     finally {
