@@ -1,5 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
+const ObjectId = require("mongodb").ObjectId;
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -18,12 +19,31 @@ async function run() {
         await client.connect();
         const database = client.db("tourX");
         const packageCollection = database.collection("tourPackage");
+        const commentCollection = database.collection("customerComment");
 
         //get api(getting all tour packages)
         app.get('/packages', async (req, res) => {
             const cursor = packageCollection.find({});
             const result = await cursor.toArray();
             res.send(result);
+        })
+        //get api dynamic(single package)
+        app.get("/packages/:id", async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const package = await packageCollection.findOne(query);
+            res.send(package);
+
+        })
+
+        //post api(cutomer comment)
+        app.post('/customerComment', async (req, res) => {
+            console.log("server hittin", req.body);
+            const comment = req.body;
+            const result = await commentCollection.insertOne(comment);
+            res.json(result);
+
+
         })
     }
     finally {
